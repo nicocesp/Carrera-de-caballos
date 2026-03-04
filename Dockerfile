@@ -5,7 +5,7 @@ FROM node:20-alpine
 RUN npm install -g serve
 
 WORKDIR /app
-COPY "carrera de caballos/web" /app/web
+COPY ["carrera de caballos/web", "/app/web"]
 
 EXPOSE 8080
 CMD ["sh", "-c", "serve web -s -l ${PORT:-8080}"]

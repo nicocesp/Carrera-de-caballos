@@ -1,0 +1,15 @@
+# No incluir en la imagen Docker (solo desplegamos web/)
+target/
+src/
+*.java
+pom.xml
+mvnw
+mvnw.cmd
+.mvn/
+run.bat
+run.ps1
+.git/
+.gitignore
+*.md
+.vscode/
+docs/

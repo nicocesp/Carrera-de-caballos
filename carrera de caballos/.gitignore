@@ -1,12 +1,15 @@
-# Maven
+# Build / dependencias
 target/
-!.mvn/wrapper/maven-wrapper.properties
+node_modules/
+server/node_modules/
+
+# Datos del servidor
+server/data/
 
 # IDE
 .idea/
 *.iml
 .vscode/
-*.class
 
 # OS
 .DS_Store

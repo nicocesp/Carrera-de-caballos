@@ -1,23 +1,18 @@
-# Carreras de Caballos - Versión Web (JavaScript)
+# Frontend — Carreras de Caballos
 
-Misma lógica que la app JavaFX, ejecutable en el navegador.
+Interfaz web del juego (HTML, CSS, JavaScript). Funciona en dos modos:
 
-## Cómo ejecutar
-
-1. **Abrir directamente**: abre `index.html` con doble clic o arrastrando al navegador.
-2. **Con servidor local** (si hay problemas de CORS):
-   ```bash
-   npx serve .
-   ```
-   Luego entra en http://localhost:3000
+- **Con servidor**: abriendo la app desde `http://localhost:3000` (tras `npm start` en la raíz) se activan registro, salas de 4 jugadores y compra de puntos.
+- **Solo estático**: abriendo `index.html` (o sirviendo la carpeta `web/`) solo está disponible la partida local.
 
 ## Estructura
 
-- `index.html` – Punto de entrada
-- `css/styles.css` – Estilo tipo casino (verde, dorado, emojis)
-- `js/model/` – Suit, Card, Horse, Deck, Track, Player, GameState
-- `js/game/` – GameEngine
-- `js/util/` – GameConfig, deckFactory
-- `js/app.js` – Menú, configuración, reglas, carrera y resultados
+- `index.html` — Entrada; carga Socket.io, api.js, model, game, app.js
+- `css/styles.css` — Estilo tipo casino (verde, dorado, emojis 🪙 🏆 ⚔️ 🪵 🏇)
+- `js/api.js` — Cliente API (auth, salas, puntos)
+- `js/app.js` — Menú, auth, configuración, reglas, carrera, resultados, salas
+- `js/model/` — Suit, Card, Horse, Deck, Track, Player, GameState
+- `js/util/` — GameConfig, deckFactory
+- `js/game/` — GameEngine (lógica de la carrera)
 
-Los emojis (🪙 🏆 ⚔️ 🪵 🏇) se ven correctamente en navegadores modernos.
+Para ejecutar el proyecto completo, ver el **README.md** en la raíz del repositorio.

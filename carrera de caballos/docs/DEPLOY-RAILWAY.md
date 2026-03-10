@@ -1,44 +1,47 @@
 # Desplegar en Railway
 
-El proyecto incluye un **Dockerfile** para desplegar solo la **versión web** (HTML/CSS/JS) en Railway. La app Java (JavaFX) es de escritorio y no se despliega en la nube.
+El proyecto incluye un **Dockerfile** para desplegar la **versión web estática** (solo la carpeta `web/`) en Railway. La app es 100% JavaScript; el Dockerfile sirve los archivos estáticos sin backend.
 
-## Qué estaba fallando
+Si quieres desplegar la app **con servidor** (multijugador), en Railway debes usar un servicio Node que ejecute `npm start` y, si aplica, añadir un add-on de base de datos (por ejemplo PostgreSQL) y adaptar `server/src/db/` para usarla.
 
-- **Error:** "Error al crear un plan de compilación con Railpack".
-- **Causa:** En el repo, el código está dentro de la carpeta `carrera de caballos/`. Railway ejecuta el build en la **raíz del repo**, donde no hay `pom.xml` ni `package.json`, y Railpack no sabe cómo construir.
-- **Solución:** Usar el **Dockerfile** (que sí sabe cómo servir la web) y decirle a Railway que use la carpeta del proyecto como raíz de build.
+---
 
-## Pasos en Railway
+## Despliegue solo web (estático)
 
-1. **Root Directory**  
-   En el proyecto de Railway: **Settings** → **Source** → **Root Directory** → pon:  
-   `carrera de caballos`  
-   (o el nombre exacto de la carpeta en tu repo si es distinto).  
-   Así el build se ejecuta dentro de esa carpeta y encontrará el `Dockerfile`.
-
-2. **Builder**  
-   Con el Root Directory bien configurado, Railway debería detectar el `Dockerfile` y usarlo. No hace falta elegir “Nixpacks” ni “Railpack”; al ver el Dockerfile, usará Docker.
-
-3. **Puerto**  
-   El contenedor expone el puerto **8080**. Railway suele leer la variable `PORT`; si te pide un puerto concreto, en el Dockerfile ya está `-l 8080`. Si Railway inyecta `PORT`, habría que cambiar el `CMD` para usar esa variable (solo si Railway lo requiere).
-
-4. **Dominio**  
-   Después del deploy, en **Settings** → **Networking** → **Generate Domain** para obtener la URL pública.
-
-## Qué hace el Dockerfile
+### Qué hace el Dockerfile
 
 - Imagen base: `node:20-alpine`
 - Instala `serve` (servidor estático)
-- Copia solo la carpeta `web/` (por `.dockerignore` no se copia `src/`, `target/`, etc.)
-- Ejecuta: `serve web -s -l 8080`  
-  (`-s` = SPA fallback a `index.html`, `-l 8080` = puerto)
+- Copia solo la carpeta **web/** (`.dockerignore` evita copiar `server/node_modules`, `server/data`, etc.)
+- Expone puerto 8080 (o la variable `PORT` que inyecte Railway)
+- Comando: `serve web -s -l ${PORT:-8080}` (`-s` = SPA fallback a `index.html`)
+
+### Pasos en Railway
+
+1. **Root Directory**  
+   En el proyecto de Railway: **Settings** → **Source** → **Root Directory** → `carrera de caballos` (o el nombre de la carpeta del repo).
+
+2. **Builder**  
+   Railway detectará el **Dockerfile** y usará Docker para el build.
+
+3. **Puerto**  
+   El contenedor usa `PORT` si existe; por defecto 8080. Railway suele inyectar `PORT` automáticamente.
+
+4. **Dominio**  
+   Después del deploy: **Settings** → **Networking** → **Generate Domain**.
+
+### Resultado
+
+Solo se sirve el frontend. Los usuarios pueden jugar **partida local**; no habrá registro ni salas multijugador (para eso hace falta desplegar el servidor Node por separado).
+
+---
 
 ## Resumen
 
-| Dónde           | Valor / Acción                          |
-|-----------------|-----------------------------------------|
-| Root Directory  | `carrera de caballos`                   |
-| Build           | Automático vía Dockerfile               |
-| App desplegada  | Versión web (abrir `index.html` en navegador) |
+| Dónde          | Valor / Acción                    |
+|----------------|-----------------------------------|
+| Root Directory | `carrera de caballos`             |
+| Build          | Dockerfile (sirve `web/`)         |
+| App desplegada | Versión web estática (partida local) |
 
-Después de cambiar el Root Directory, haz **Redeploy** para que use el Dockerfile y vuelva a construir.
+Tras configurar Root Directory, haz **Redeploy** para que use el Dockerfile.

@@ -1,0 +1,14 @@
+{
+  "name": "carrera-de-caballos",
+  "version": "1.0.0",
+  "description": "Carreras de Caballos — juego web con multijugador (JavaScript)",
+  "private": true,
+  "scripts": {
+    "start": "node server/src/server.js",
+    "dev": "node --watch server/src/server.js",
+    "install:server": "cd server && npm install"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

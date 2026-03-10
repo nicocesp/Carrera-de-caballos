@@ -1,0 +1,18 @@
+# Solo se versiona "carrera de caballos". El resto se ignora.
+/An-lisis-Num-rico/
+/HotelMocawua/
+/SQLplay/
+/apireactiva/
+/appParcial/
+/medio tiempo/
+/oxxo/
+/veterinaria_node/
+/oxxo Sprint boot Reactivo.zip
+/oxxo.rar
+
+# IDE y sistema (por si se añaden más carpetas en la raíz)
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db

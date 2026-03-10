@@ -1,10 +1,13 @@
-# Carreras de Caballos - Despliegue web estático en Railway
+# Carreras de Caballos - App completa (Node + login, salas, puntos)
 FROM node:20-alpine
 
-RUN npm install -g serve
-
 WORKDIR /app
-COPY web /app/web
 
-EXPOSE 8080
-CMD ["sh", "-c", "serve web -s -l ${PORT:-8080}"]
+COPY package.json ./
+COPY server/ server/
+COPY web/ web/
+
+RUN cd server && npm install --production
+
+EXPOSE 3000
+CMD ["node", "server/src/server.js"]

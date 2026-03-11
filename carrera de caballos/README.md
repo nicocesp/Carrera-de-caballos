@@ -11,7 +11,7 @@ Juego web en **JavaScript** (frontend en el navegador + backend Node.js) con par
 3. [Modelo de datos](#3-modelo-de-datos)
 4. [Estructura del proyecto](#4-estructura-del-proyecto)
 5. [Cómo ejecutar](#5-cómo-ejecutar)
-6. [Despliegue](#6-despliegue)
+6. [Base de datos y configuración](#6-base-de-datos-y-configuración)
 
 ---
 
@@ -52,7 +52,7 @@ En la app puedes jugar **partida local** (solo en el navegador) o **en salas de 
 | **point_transactions** | user_id, amount, type (signup \| race_bet \| race_win \| purchase), balance_after. |
 | **point_purchases**   | user_id, points, amount_cop, payment_reference. |
 
-Esquema SQL e índices en `server/src/db/schema.sql`. Por defecto se usa un store en JSON (`server/data/carrera.json`).
+Esquema MySQL en `server/src/db/schema-mysql.sql`. La base de datos es **MySQL** (por ejemplo con XAMPP); ver `docs/XAMPP.md`.
 
 ---
 
@@ -63,7 +63,6 @@ carrera de caballos/
 ├── package.json          # Scripts: start, dev, install:server
 ├── README.md
 ├── .gitignore
-├── Dockerfile            # Despliegue web estático (solo carpeta web)
 │
 ├── web/                  # Frontend (HTML, CSS, JS)
 │   ├── index.html
@@ -75,20 +74,21 @@ carrera de caballos/
 │       ├── util/         # GameConfig, deckFactory
 │       └── game/         # GameEngine
 │
-├── server/               # Backend Node (API + Socket.io)
+├── server/               # Backend Node (API + Socket.io + MySQL)
 │   ├── package.json
+│   ├── .env.example      # Variables de entorno (DB_HOST, DB_USER, etc.)
 │   ├── src/
 │   │   ├── server.js     # Express, rutas, estáticos, Socket.io
-│   │   ├── db/           # database.js, schema.sql, init.js
+│   │   ├── db/           # database.js (MySQL), schema-mysql.sql, init.js
 │   │   ├── middleware/   # auth.js (JWT)
 │   │   ├── routes/       # auth, users, rooms, points
 │   │   ├── socket/       # roomHandler.js (salas, carrera, resultado)
-│   │   └── game/        # runRace.js (carrera en servidor)
-│   └── data/             # carrera.json (generado al usar la app)
+│   │   └── game/         # runRace.js (carrera en servidor)
+│   └── data/             # (ya no se usa; los datos están en MySQL)
 │
 └── docs/
     ├── ESTRUCTURA.md     # Detalle de directorios
-    └── DEPLOY-RAILWAY.md # Despliegue en Railway
+    └── XAMPP.md          # Configurar MySQL con XAMPP
 ```
 
 ---
@@ -98,36 +98,27 @@ carrera de caballos/
 ### Requisitos
 
 - **Node.js 18** o superior.
+- **MySQL** (XAMPP). Ver **docs/XAMPP.md** para crear la base de datos `carrera` y las tablas.
 
-### Con servidor (partida local + multijugador)
+### Un solo servidor (recomendado)
 
-1. Instalar dependencias del servidor (una vez):
-   ```bash
-   npm run install:server
-   ```
-2. Arrancar el servidor:
-   ```bash
-   npm start
-   ```
-3. Abrir en el navegador: **http://localhost:3000**
+Siempre usa el servidor Node para tener login, registro, salas y partida local en **una sola URL**:
 
-Verás la pantalla de Entrar / Registrarse y “Jugar sin cuenta (solo local)”. Tras registrarte podrás crear salas, unirte con código, jugar partidas locales y comprar puntos.
+1. Instalar dependencias del servidor (una vez): `npm run install:server`
+2. Arrancar: `npm start`
+3. Abrir **la URL que muestre la consola** (por defecto **http://localhost:3000**).
 
-Modo desarrollo (reinicio al cambiar código):
+En esa URL tendrás “Jugar sin cuenta (solo local)”. En esa URL tendrás login, registro, salas y partida local.
 
-```bash
-npm run dev
-```
+No abras `web/index.html` directamente ni uses otro servidor: solo este activa login y salas. Si el puerto 3000 está ocupado, la consola indicará cómo liberarlo.
 
-### Solo frontend (partida local, sin servidor)
-
-Abrir `web/index.html` en el navegador (o servir la carpeta `web/` con cualquier servidor estático). Solo estará disponible la partida local; no habrá registro ni salas.
+Modo desarrollo: `npm run dev`
 
 ---
 
-## 6. Despliegue
+## 6. Base de datos y configuración
 
-- **Solo web estática**: ver `docs/DEPLOY-RAILWAY.md` y el `Dockerfile` en la raíz (sirve la carpeta `web/`).
-- **Servidor**: configurar `PORT` y `JWT_SECRET` en el entorno; la app se sirve desde el mismo Node (Express + estáticos desde `web/`).
+- **MySQL (XAMPP)**: ver `docs/XAMPP.md` para instalar XAMPP, crear la base de datos `carrera` y ejecutar el esquema.
+- **Variables de entorno**: en `server/` puedes crear un archivo `.env` (copiar de `.env.example`) con `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `PORT` y `JWT_SECRET`.
 
 Más detalle en `server/README.md`.

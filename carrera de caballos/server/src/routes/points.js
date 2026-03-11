@@ -1,25 +1,23 @@
 const express = require('express');
 const { getDb } = require('../db/database');
 const { authMiddleware } = require('../middleware/auth');
+const { PACKAGE_POINTS, PACKAGE_PRICE_COP } = require('../config/constants');
 
 const router = express.Router();
 router.use(authMiddleware);
 
-const PACKAGE_POINTS = 1000;
-const PACKAGE_PRICE_COP = 10000;
-
-router.post('/purchase', (req, res) => {
+router.post('/purchase', async (req, res) => {
   const db = getDb();
-  const user = db.prepare('SELECT id, points FROM users WHERE id = ?').get(req.user.id);
+  const user = await db.prepare('SELECT id, points FROM users WHERE id = ?').get(req.user.id);
   if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
 
   const newPoints = user.points + PACKAGE_POINTS;
-  const now = new Date().toISOString();
-  db.prepare('UPDATE users SET points = ?, updated_at = ? WHERE id = ?').run(newPoints, now, req.user.id);
-  const purchaseResult = db.prepare(
+  const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  await db.prepare('UPDATE users SET points = ?, updated_at = ? WHERE id = ?').run(newPoints, now, req.user.id);
+  const purchaseResult = await db.prepare(
     'INSERT INTO point_purchases (user_id, points, amount_cop, payment_reference, created_at) VALUES (?, ?, ?, ?, ?)'
   ).run(req.user.id, PACKAGE_POINTS, PACKAGE_PRICE_COP, 'manual-' + Date.now(), now);
-  db.prepare(
+  await db.prepare(
     'INSERT INTO point_transactions (user_id, amount, type, reference_type, reference_id, balance_after) VALUES (?, ?, ?, ?, ?, ?)'
   ).run(req.user.id, PACKAGE_POINTS, 'purchase', 'point_purchase', purchaseResult.lastInsertRowid, newPoints);
 

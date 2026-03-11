@@ -4,10 +4,7 @@ const { Server } = require('socket.io');
 const cors = require('cors');
 const path = require('path');
 
-const { runSchema } = require('./db/database');
 const { authMiddleware } = require('./middleware/auth');
-
-runSchema();
 
 const app = express();
 const server = http.createServer(app);
@@ -44,6 +41,23 @@ const { setupRoomHandlers } = require('./socket/roomHandler');
 setupRoomHandlers(io);
 
 const PORT = process.env.PORT || 3000;
+const BASE_URL = `http://localhost:${PORT}`;
+
 server.listen(PORT, () => {
-  console.log('Servidor Carreras de Caballos en puerto', PORT);
+  console.log('');
+  console.log('  Carreras de Caballos');
+  console.log('  --------------------');
+  console.log('  Abre en el navegador: ' + BASE_URL);
+  console.log('');
+}).on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error('');
+    console.error('  El puerto ' + PORT + ' ya está en uso.');
+    console.error('  Para usar solo este servidor:');
+    console.error('  1. Cierra la otra aplicación que usa el puerto ' + PORT + ', o');
+    console.error('  2. Ejecuta con otro puerto:  $env:PORT=3001; npm start  (PowerShell) o  set PORT=3001 && npm start  (CMD)');
+    console.error('');
+    process.exit(1);
+  }
+  throw err;
 });

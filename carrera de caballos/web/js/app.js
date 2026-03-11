@@ -430,7 +430,6 @@
       return;
     }
     const result = engine.runOneTurn();
-    const cardEl = document.getElementById('cardRevealed');
     const checkEl = document.getElementById('checkpointLabel');
     const cardVal = document.getElementById('cardRevealed');
     if (cardVal) cardVal.textContent = result.drawnCard ? result.drawnCard.toShortString() : '—';

@@ -6,6 +6,10 @@ server/node_modules/
 # Datos del servidor
 server/data/
 
+# Variables de entorno (contraseñas)
+.env
+server/.env
+
 # IDE
 .idea/
 *.iml

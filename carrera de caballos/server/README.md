@@ -22,9 +22,9 @@ La app web se sirve en `http://localhost:3000`. La API está en `/api`.
 
 ## Base de datos
 
-- Por defecto se usa un store en **JSON** (`data/carrera.json`) para no depender de compilación nativa.
-- Esquema lógico: `users`, `rooms`, `room_players`, `point_transactions`, `point_purchases`.
-- Para producción con más carga puedes sustituir `src/db/database.js` por una implementación con **PostgreSQL** o **SQLite** (better-sqlite3) usando el mismo esquema en `schema.sql`.
+- Se usa **MySQL** (por ejemplo con XAMPP). Ver **docs/XAMPP.md** en la raíz del proyecto para crear la base de datos y las tablas.
+- Esquema: `src/db/schema-mysql.sql`. Tablas: `users`, `rooms`, `room_players`, `point_transactions`, `point_purchases`.
+- Variables: `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` (ver `.env.example`).
 
 ## Reglas de negocio
 
@@ -35,5 +35,6 @@ La app web se sirve en `http://localhost:3000`. La API está en `/api`.
 
 ## Variables de entorno
 
+- `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`: conexión MySQL (por defecto localhost, root, vacío, carrera).
 - `PORT`: puerto (default 3000).
 - `JWT_SECRET`: secreto para tokens (cambiar en producción).

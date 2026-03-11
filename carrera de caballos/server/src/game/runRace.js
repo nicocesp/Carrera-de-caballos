@@ -23,6 +23,7 @@ function runRace(trackLength) {
   shuffle(deck);
   const track = deck.splice(0, trackLength);
   const draw = deck;
+  const discard = [];
   const horses = {};
   suits.forEach(s => { horses[s.key] = { position: 0 }; });
   let flippedIndex = 0;
@@ -40,17 +41,24 @@ function runRace(trackLength) {
     for (const s of suits) if (horses[s.key].position > trackLength) return s;
     return null;
   };
+  const hasCardsToDraw = () => draw.length > 0 || discard.length > 0;
 
-  while (winner === null && draw.length > 0) {
+  while (winner === null && hasCardsToDraw()) {
+    if (draw.length === 0 && discard.length > 0) {
+      draw.push(...discard);
+      discard.length = 0;
+      shuffle(draw);
+      log.push({ rebaraja: true });
+    }
     const card = draw.shift();
+    discard.push(card);
     horses[card.suit.key].position++;
     log.push({ drawn: card.suit.key, positions: { ...Object.fromEntries(suits.map(s => [s.key, horses[s.key].position])) } });
     while (allPast(flippedIndex)) {
       const flipped = flipNext();
-      if (flipped) {
-        horses[flipped.suit.key].position = Math.max(0, horses[flipped.suit.key].position - 1);
-        log.push({ obstacle: flipped.suit.key });
-      }
+      if (!flipped) break; // No quedan checkpoints por voltear
+      horses[flipped.suit.key].position = Math.max(0, horses[flipped.suit.key].position - 1);
+      log.push({ obstacle: flipped.suit.key });
     }
     winner = checkWinner();
   }

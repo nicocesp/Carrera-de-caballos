@@ -11,7 +11,6 @@ carrera de caballos/
 ├── package.json          # Scripts: npm start, npm run dev, npm run install:server
 ├── README.md
 ├── .gitignore
-├── Dockerfile            # Despliegue web estático (copia solo web/)
 │
 ├── web/                  # Frontend
 │   ├── index.html        # Entrada; carga CSS y scripts (api, model, game, app)
@@ -36,15 +35,15 @@ carrera de caballos/
 │           └── GameEngine.js   # Turnos, avance, checkpoint, victoria (partida local)
 │
 ├── server/                # Backend
-│   ├── package.json      # Dependencias: express, socket.io, bcryptjs, jsonwebtoken, cors, sql.js
+│   ├── package.json      # Dependencias: express, socket.io, bcryptjs, jsonwebtoken, cors, mysql2
+│   ├── .env.example      # Ejemplo de variables (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME)
 │   ├── README.md         # Cómo ejecutar y variables de entorno
-│   ├── data/             # carrera.json (store por defecto; no en git)
 │   └── src/
 │       ├── server.js     # Express + Socket.io, rutas API, servir web/
 │       ├── db/
-│       │   ├── database.js   # Store JSON (getDb, runSchema)
-│       │   ├── schema.sql    # Esquema e índices (referencia para PostgreSQL/SQLite)
-│       │   └── init.js       # Ejecutar runSchema (opcional)
+│       │   ├── database.js   # Conexión MySQL (getDb, runSchema)
+│       │   ├── schema-mysql.sql   # Esquema para MySQL (XAMPP)
+│       │   └── init.js       # Crear tablas (npm run init-db)
 │       ├── middleware/
 │       │   └── auth.js       # JWT: authMiddleware, signToken
 │       ├── routes/
@@ -59,7 +58,7 @@ carrera de caballos/
 │
 └── docs/
     ├── ESTRUCTURA.md     # Este archivo
-    └── DEPLOY-RAILWAY.md # Pasos para desplegar web estática en Railway
+    └── XAMPP.md          # Configurar MySQL con XAMPP
 ```
 
 ---
@@ -74,7 +73,7 @@ carrera de caballos/
 | **UI**     | `web/js/app.js` + `web/css/styles.css` | Menú, auth, config, reglas, carrera, resultados, salas. |
 | **API**    | `server/src/routes/` | Auth, usuarios, salas, puntos. |
 | **Tiempo real** | `server/src/socket/roomHandler.js` | Salas, inicio de carrera, resultado. |
-| **Datos**  | `server/src/db/database.js`, `server/data/carrera.json` | Usuarios, salas, jugadores, transacciones. |
+| **Datos**  | `server/src/db/database.js`, MySQL (XAMPP) | Usuarios, salas, jugadores, transacciones. |
 
 ---
 
